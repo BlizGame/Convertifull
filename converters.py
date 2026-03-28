@@ -16,7 +16,7 @@ class ImageConverter(BaseConverter):
     def convert(self, input_path: str, target_ext: str) -> None:
         out_path = self.get_output_path(input_path, target_ext)
         with Image.open(input_path) as img:
-            if img.mode in ("RGBA", "P") and target_ext.lower() in ("jpg", "jpeg"):
+            if img.mode in ("RGBA", "P") and target_ext.lower() in ("jpg", "jpeg", "bmp"):
                 img = img.convert("RGB")
             img.save(out_path)
 

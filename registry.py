@@ -10,30 +10,44 @@ class RegistryManager:
             self.config = json.load(f)
         self.python_exe = sys.executable
         self.script_path = os.path.abspath("main.py")
-        self.base_key = r"*\shell\PyConverter"
+        self.app_key_name = "PyConverter"
+
+    def _delete_key_tree(self, root, subkey):
+        try:
+            with winreg.OpenKey(root, subkey, 0, winreg.KEY_ALL_ACCESS) as key:
+                info = winreg.QueryInfoKey(key)
+                for _ in range(info[0]):
+                    sub = winreg.EnumKey(key, 0)
+                    self._delete_key_tree(root, rf"{subkey}\{sub}")
+            winreg.DeleteKey(root, subkey)
+        except OSError:
+            pass
+
+    def uninstall(self):
+        for category in self.config.keys():
+            base_path = rf"SystemFileAssociations\{category}\shell\{self.app_key_name}"
+            self._delete_key_tree(winreg.HKEY_CLASSES_ROOT, base_path)
 
     def install(self):
+        self.uninstall()
         try:
-            with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, self.base_key) as key:
-                winreg.SetValueEx(key, "MUIVerb", 0, winreg.REG_SZ, "Конвертация")
-                winreg.SetValueEx(key, "SubCommands", 0, winreg.REG_SZ, "")
+            for category, data in self.config.items():
+                base_path = rf"SystemFileAssociations\{category}\shell\{self.app_key_name}"
+                with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, base_path) as key:
+                    winreg.SetValueEx(key, "MUIVerb", 0, winreg.REG_SZ, "Convert")
+                    winreg.SetValueEx(key, "SubCommands", 0, winreg.REG_SZ, "")
 
-                shell_key_path = rf"{self.base_key}\shell"
-                with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, shell_key_path) as shell_key:
-                    self._register_formats(shell_key_path)
-            print("Контекстное меню успешно установлено.")
+                    shell_path = rf"{base_path}\shell"
+                    with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, shell_path) as shell_key:
+                        self._register_targets(shell_path, data.get("targets", []))
         except PermissionError:
-            print("Ошибка: Запустите скрипт от имени Администратора.")
+            sys.exit(1)
 
-    def _register_formats(self, parent_key_path: str):
-        targets = set()
-        for category in self.config.values():
-            targets.update(category.get("targets", []))
-
+    def _register_targets(self, parent_path: str, targets: list):
         for target in sorted(targets):
-            cmd_key_path = rf"{parent_key_path}\to_{target}"
-            with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, cmd_key_path) as cmd_key:
-                winreg.SetValueEx(cmd_key, "", 0, winreg.REG_SZ, f"В {target.upper()}")
-                with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, rf"{cmd_key_path}\command") as run_key:
+            cmd_path = rf"{parent_path}\to_{target}"
+            with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, cmd_path) as cmd_key:
+                winreg.SetValueEx(cmd_key, "", 0, winreg.REG_SZ, f"To {target.upper()}")
+                with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, rf"{cmd_path}\command") as run_key:
                     cmd = f'"{self.python_exe}" "{self.script_path}" "%1" "{target}"'
                     winreg.SetValueEx(run_key, "", 0, winreg.REG_SZ, cmd)

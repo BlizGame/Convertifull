@@ -1,14 +1,14 @@
 {
     "image": {
-        "extensions": [".jpg", ".jpeg", ".png", ".webp", ".bmp"],
-        "targets": ["jpg", "png", "webp"]
+        "extensions": [".jpg", ".jpeg", ".png", ".webp", ".bmp", ".jfif", ".ico", ".heic"],
+        "targets": ["jpg", "png", "webp", "bmp", "tiff", "ico"]
     },
     "audio": {
-        "extensions": [".mp3", ".wav", ".ogg", ".flac"],
-        "targets": ["mp3", "wav"]
+        "extensions": [".mp3", ".wav", ".ogg", ".flac", ".aac", ".m4a", ".wma"],
+        "targets": ["mp3", "wav", "ogg", "flac", "aac"]
     },
     "video": {
-        "extensions": [".mp4", ".avi", ".mkv", ".mov", ".gif"],
-        "targets": ["mp4", "avi", "gif"]
+        "extensions": [".mp4", ".avi", ".mkv", ".mov", ".gif", ".webm", ".flv", ".wmv"],
+        "targets": ["mp4", "avi", "gif", "webm", "mkv"]
     }
 }

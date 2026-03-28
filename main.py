@@ -12,9 +12,13 @@ def load_config() -> dict:
 
 
 def main():
-    if len(sys.argv) == 2 and sys.argv[1] == "--install":
-        RegistryManager("config.json").install()
-        return
+    if len(sys.argv) == 2:
+        if sys.argv[1] == "--install":
+            RegistryManager("config.json").install()
+            return
+        elif sys.argv[1] == "--uninstall":
+            RegistryManager("config.json").uninstall()
+            return
 
     if len(sys.argv) < 3:
         return
