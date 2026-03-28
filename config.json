@@ -1,6 +1,9 @@
 {
+    "settings": {
+        "delete_source": true
+    },
     "image": {
-        "extensions": [".jpg", ".jpeg", ".png", ".webp", ".bmp", ".jfif", ".ico", ".heic"],
+        "extensions": [".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".ico", ".heic", ".jfif"],
         "targets": ["jpg", "png", "webp", "bmp", "tiff", "ico"]
     },
     "audio": {
@@ -9,6 +12,6 @@
     },
     "video": {
         "extensions": [".mp4", ".avi", ".mkv", ".mov", ".gif", ".webm", ".flv", ".wmv"],
-        "targets": ["mp4", "avi", "gif", "webm", "mkv"]
+        "targets": ["mp4", "avi", "gif", "webm", "mkv", "mp3", "wav", "ogg"]
     }
 }

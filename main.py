@@ -35,6 +35,9 @@ def main():
     try:
         converter = ConverterFactory.get_converter(ext, config)
         converter.convert(input_path, target_ext)
+
+        if config.get("settings", {}).get("delete_source", False):
+            os.remove(input_path)
     except Exception:
         pass
 

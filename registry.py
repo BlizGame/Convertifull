@@ -24,7 +24,11 @@ class RegistryManager:
             pass
 
     def uninstall(self):
+        self._delete_key_tree(winreg.HKEY_CLASSES_ROOT, rf"*\shell\{self.app_key_name}")
+
         for category in self.config.keys():
+            if category == "settings":
+                continue
             base_path = rf"SystemFileAssociations\{category}\shell\{self.app_key_name}"
             self._delete_key_tree(winreg.HKEY_CLASSES_ROOT, base_path)
 
@@ -32,6 +36,9 @@ class RegistryManager:
         self.uninstall()
         try:
             for category, data in self.config.items():
+                if category == "settings":
+                    continue
+
                 base_path = rf"SystemFileAssociations\{category}\shell\{self.app_key_name}"
                 with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, base_path) as key:
                     winreg.SetValueEx(key, "MUIVerb", 0, winreg.REG_SZ, "Convert")

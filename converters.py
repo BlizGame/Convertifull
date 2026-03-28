@@ -24,7 +24,7 @@ class FFmpegConverter(BaseConverter):
     def convert(self, input_path: str, target_ext: str) -> None:
         out_path = self.get_output_path(input_path, target_ext)
         cmd = ["ffmpeg", "-y", "-i", input_path, out_path]
-        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
 
 class ConverterFactory:
     @staticmethod
