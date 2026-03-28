@@ -1,53 +1,49 @@
 # Convertifull
 
-A seamless Windows context menu extension for converting image, audio, and video files directly from File Explorer. 
+A seamless Windows context menu extension for converting image, audio, and video files directly from File Explorer.
 
 ## Features
-- **Right-Click Conversion:** Convert files via the Windows context menu.
-- **Smart Menus:** Only shows target formats relevant to the selected file type.
-- **Multi-file Support:** Select multiple files and convert them in a single batch process.
-- **Background Execution:** Converts files silently without spawning multiple console windows.
+* **Right-Click Conversion:** Convert files quickly via the native Windows context menu.
+* **Smart Context:** The menu automatically adapts, showing only relevant target formats for the selected file type.
+* **Multi-file Support:** Select multiple files at once and convert them in a single, organized background batch.
+* **Clean Execution:** Processes files without spawning multiple disruptive console windows.
+* **Non-Destructive:** Creates a new converted file in the same directory while keeping your original file intact.
 
 ## Prerequisites
-Before installing Convertifull, ensure you have the following installed on your system:
-1. **Python 3.8+**: [Download Python](https://www.python.org/downloads/) (Check "Add Python to PATH" during installation).
-2. **FFmpeg**: Required for audio and video conversion.
-   - Download the latest essential build from [gyan.dev](https://www.gyan.dev/ffmpeg/builds/).
-   - Extract the archive.
-   - Add the `bin` folder path to your Windows **System Environment Variables** (`Path`).
+
+1. **Python (3.8 or newer) - REQUIRED**
+   * Download from the [official Python website](https://www.python.org/downloads/).
+   * **Crucial:** During installation, make sure to check the box that says **"Add Python to PATH"**.
+
+2. **FFmpeg - OPTIONAL (Required ONLY for Video & Audio)**
+   * If you only want to convert images, you can skip this step.
+   * Download the latest essential build from [gyan.dev](https://www.gyan.dev/ffmpeg/builds/).
+   * Extract the downloaded archive to a permanent folder (e.g., `C:\ffmpeg`).
+   * Add the `bin` folder (e.g., `C:\ffmpeg\bin`) to your Windows **System Environment Variables** (`Path`).
 
 ## Installation
-1. Download or clone this repository to a permanent location on your drive.
-2. Open Command Prompt (cmd) in the project folder and install the required Python library:
-   
+1. Download this repository as a `.zip` file and extract it to a permanent folder on your computer.
+2. Open Command Prompt (`cmd`) in the extracted folder and install the required image processing library:
    ```bash
    pip install Pillow
    ```
-4. Open Command Prompt as Administrator.
-5. Navigate to your project folder using the cd command (e.g., cd C:\path\to\Convertifull).
-6. Run the installation script:
-   
-   ```
-   python main.py --install
-   ```
+3. Double-click the **`install.bat`** file. 
+4. If prompted by Windows User Account Control (UAC), click **Yes** to grant Administrator privileges.
 
 ## Usage
 1. Open Windows File Explorer.
-2. Right-click on any supported media file. (On Windows 11, you may need to click "Show more options" first).
-3. Hover over Convert.
+2. Right-click on any supported media file. *(On Windows 11, you may need to click "Show more options" first).*
+3. Hover over **Convert**.
 4. Select the format you want to convert the file into.
 5. A single console window will appear to show the progress. Once done, the window will close automatically, and your new file will be ready next to the original one.
 
 ## Configuration
-You can easily add or remove supported formats by editing the config.json file in a text editor. If you add new target formats, re-run the installation command to update your context menu.
+You can easily add or remove supported formats by editing the `config.json` file in a text editor. If you add new target formats, run `install.bat` again to update your context menu.
+
+## Supported Formats Out-of-the-Box
+* **Images:** `.jpg`, `.jpeg`, `.png`, `.webp`, `.bmp`, `.tiff`, `.ico`, `.heic`, `.jfif`
+* **Audio:** `.mp3`, `.wav`, `.ogg`, `.flac`, `.aac`, `.m4a`, `.wma`
+* **Video:** `.mp4`, `.avi`, `.mkv`, `.mov`, `.gif`, `.webm`, `.flv`, `.wmv`
 
 ## Uninstallation
-To cleanly remove Convertifull from your Windows context menu:
-
-1. Open Command Prompt as Administrator.
-2. Navigate to the folder containing the script.
-3. Run the following command:
-   
-  ```
-  python main.py --uninstall
-  ```
+To cleanly remove Convertifull from your Windows context menu, simply double-click the **`uninstall.bat`** file and grant Administrator privileges if prompted.
