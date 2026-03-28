@@ -8,7 +8,7 @@ class RegistryManager:
     def __init__(self, config_path: str):
         with open(config_path, 'r', encoding='utf-8') as f:
             self.config = json.load(f)
-        self.python_exe = sys.executable
+        self.python_exe = sys.executable.replace("python.exe", "pythonw.exe")
         self.script_path = os.path.abspath("main.py")
         self.app_key_name = "PyConverter"
 

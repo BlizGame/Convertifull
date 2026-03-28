@@ -3,6 +3,7 @@ import subprocess
 from abc import ABC, abstractmethod
 from PIL import Image
 
+
 class BaseConverter(ABC):
     @abstractmethod
     def convert(self, input_path: str, target_ext: str) -> None:
@@ -12,6 +13,7 @@ class BaseConverter(ABC):
         base, _ = os.path.splitext(input_path)
         return f"{base}.{target_ext}"
 
+
 class ImageConverter(BaseConverter):
     def convert(self, input_path: str, target_ext: str) -> None:
         out_path = self.get_output_path(input_path, target_ext)
@@ -20,11 +22,23 @@ class ImageConverter(BaseConverter):
                 img = img.convert("RGB")
             img.save(out_path)
 
+
 class FFmpegConverter(BaseConverter):
     def convert(self, input_path: str, target_ext: str) -> None:
         out_path = self.get_output_path(input_path, target_ext)
         cmd = ["ffmpeg", "-y", "-i", input_path, out_path]
-        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
+        subprocess.run(
+            cmd,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            startupinfo=startupinfo,
+            check=True
+        )
+
 
 class ConverterFactory:
     @staticmethod
@@ -33,6 +47,6 @@ class ConverterFactory:
         if ext in config.get("image", {}).get("extensions", []):
             return ImageConverter()
         if ext in config.get("audio", {}).get("extensions", []) or \
-           ext in config.get("video", {}).get("extensions", []):
+                ext in config.get("video", {}).get("extensions", []):
             return FFmpegConverter()
         raise ValueError(f"Unsupported extension: {ext}")
