@@ -1,6 +1,6 @@
 {
     "settings": {
-        "delete_source": true
+        "delete_source": false
     },
     "image": {
         "extensions": [".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".ico", ".heic", ".jfif"],

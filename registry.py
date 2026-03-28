@@ -26,11 +26,16 @@ class RegistryManager:
     def uninstall(self):
         self._delete_key_tree(winreg.HKEY_CLASSES_ROOT, rf"*\shell\{self.app_key_name}")
 
-        for category in self.config.keys():
+        for category, data in self.config.items():
             if category == "settings":
                 continue
-            base_path = rf"SystemFileAssociations\{category}\shell\{self.app_key_name}"
-            self._delete_key_tree(winreg.HKEY_CLASSES_ROOT, base_path)
+
+            self._delete_key_tree(winreg.HKEY_CLASSES_ROOT,
+                                  rf"SystemFileAssociations\{category}\shell\{self.app_key_name}")
+
+            for ext in data.get("extensions", []):
+                self._delete_key_tree(winreg.HKEY_CLASSES_ROOT,
+                                      rf"SystemFileAssociations\{ext}\shell\{self.app_key_name}")
 
     def install(self):
         self.uninstall()
@@ -39,14 +44,22 @@ class RegistryManager:
                 if category == "settings":
                     continue
 
-                base_path = rf"SystemFileAssociations\{category}\shell\{self.app_key_name}"
-                with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, base_path) as key:
-                    winreg.SetValueEx(key, "MUIVerb", 0, winreg.REG_SZ, "Convert")
-                    winreg.SetValueEx(key, "SubCommands", 0, winreg.REG_SZ, "")
+                targets = data.get("targets", [])
+                for ext in data.get("extensions", []):
+                    clean_ext = ext.lstrip('.').lower()
+                    valid_targets = [t for t in targets if t.lower() != clean_ext]
 
-                    shell_path = rf"{base_path}\shell"
-                    with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, shell_path) as shell_key:
-                        self._register_targets(shell_path, data.get("targets", []))
+                    if not valid_targets:
+                        continue
+
+                    base_path = rf"SystemFileAssociations\{ext}\shell\{self.app_key_name}"
+                    with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, base_path) as key:
+                        winreg.SetValueEx(key, "MUIVerb", 0, winreg.REG_SZ, "Convert")
+                        winreg.SetValueEx(key, "SubCommands", 0, winreg.REG_SZ, "")
+
+                        shell_path = rf"{base_path}\shell"
+                        with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, shell_path) as shell_key:
+                            self._register_targets(shell_path, valid_targets)
         except PermissionError:
             sys.exit(1)
 
