@@ -1,0 +1,14 @@
+{
+    "image": {
+        "extensions": [".jpg", ".jpeg", ".png", ".webp", ".bmp"],
+        "targets": ["jpg", "png", "webp"]
+    },
+    "audio": {
+        "extensions": [".mp3", ".wav", ".ogg", ".flac"],
+        "targets": ["mp3", "wav"]
+    },
+    "video": {
+        "extensions": [".mp4", ".avi", ".mkv", ".mov", ".gif"],
+        "targets": ["mp4", "avi", "gif"]
+    }
+}
