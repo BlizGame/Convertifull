@@ -2,6 +2,8 @@ import os
 import subprocess
 from abc import ABC, abstractmethod
 from PIL import Image
+from svglib.svglib import svg2rlg
+from reportlab.graphics import renderPM
 
 
 class BaseConverter(ABC):
@@ -21,6 +23,16 @@ class ImageConverter(BaseConverter):
             if img.mode in ("RGBA", "P") and target_ext.lower() in ("jpg", "jpeg", "bmp"):
                 img = img.convert("RGB")
             img.save(out_path)
+
+
+class SvgConverter(BaseConverter):
+    def convert(self, input_path: str, target_ext: str) -> None:
+        out_path = self.get_output_path(input_path, target_ext)
+        drawing = svg2rlg(input_path)
+        img = renderPM.drawToPIL(drawing)
+        if img.mode in ("RGBA", "P") and target_ext.lower() in ("jpg", "jpeg", "bmp"):
+            img = img.convert("RGB")
+        img.save(out_path)
 
 
 class FFmpegConverter(BaseConverter):
@@ -46,6 +58,8 @@ class ConverterFactory:
         ext = file_ext.lower()
         if ext in config.get("image", {}).get("extensions", []):
             return ImageConverter()
+        if ext in config.get("vector", {}).get("extensions", []):
+            return SvgConverter()
         if ext in config.get("audio", {}).get("extensions", []) or \
                 ext in config.get("video", {}).get("extensions", []):
             return FFmpegConverter()

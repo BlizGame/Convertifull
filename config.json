@@ -6,6 +6,10 @@
         "extensions": [".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".ico", ".heic", ".jfif"],
         "targets": ["jpg", "png", "webp", "bmp", "tiff", "ico"]
     },
+    "vector": {
+        "extensions": [".svg"],
+        "targets": ["jpg", "png", "webp", "bmp", "tiff", "ico"]
+    },
     "audio": {
         "extensions": [".mp3", ".wav", ".ogg", ".flac", ".aac", ".m4a", ".wma"],
         "targets": ["mp3", "wav", "ogg", "flac", "aac"]
