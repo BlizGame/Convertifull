@@ -23,9 +23,9 @@ A seamless Windows context menu extension for converting image, audio, and video
 
 ## Installation
 1. Download this repository as a `.zip` file and extract it to a permanent folder on your computer.
-2. Open Command Prompt (`cmd`) in the extracted folder and install the required image processing library:
+2. Open Command Prompt (`cmd`) in the extracted folder and install the required processing libraries:
    ```bash
-   pip install Pillow
+   pip install Pillow svglib reportlab
    ```
 3. Double-click the **`install.bat`** file. 
 4. If prompted by Windows User Account Control (UAC), click **Yes** to grant Administrator privileges.
@@ -42,6 +42,7 @@ You can easily add or remove supported formats by editing the `config.json` file
 
 ## Supported Formats Out-of-the-Box
 * **Images:** `.jpg`, `.jpeg`, `.png`, `.webp`, `.bmp`, `.tiff`, `.ico`, `.heic`, `.jfif`
+* **Vector:** `.svg`
 * **Audio:** `.mp3`, `.wav`, `.ogg`, `.flac`, `.aac`, `.m4a`, `.wma`
 * **Video:** `.mp4`, `.avi`, `.mkv`, `.mov`, `.gif`, `.webm`, `.flv`, `.wmv`
 
