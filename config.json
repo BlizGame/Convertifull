@@ -4,7 +4,7 @@
     },
     "image": {
         "extensions": [".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".ico", ".heic", ".jfif"],
-        "targets": ["jpg", "png", "webp", "bmp", "tiff", "ico"]
+        "targets": ["jpg", "png", "webp", "bmp", "tiff", "ico", "gif"]
     },
     "vector": {
         "extensions": [".svg"],
@@ -15,7 +15,11 @@
         "targets": ["mp3", "wav", "ogg", "flac", "aac"]
     },
     "video": {
-        "extensions": [".mp4", ".avi", ".mkv", ".mov", ".gif", ".webm", ".flv", ".wmv"],
-        "targets": ["mp4", "avi", "gif", "webm", "mkv", "mp3", "wav", "ogg"]
+        "extensions": [".mp4", ".avi", ".mkv", ".mov", ".webm", ".flv", ".wmv"],
+        "targets": ["mp4", "avi", "gif", "gif_hq", "gif_low", "webm", "mkv", "mp3", "wav", "ogg"]
+    },
+    "gif": {
+        "extensions": [".gif"],
+        "targets": ["jpg", "png", "webp", "mp4", "avi", "webm", "mkv"]
     }
 }
