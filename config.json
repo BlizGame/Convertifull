@@ -1,6 +1,7 @@
 {
     "settings": {
-        "delete_source": false
+        "delete_source": false,
+        "max_workers": 4
     },
     "image": {
         "extensions": [".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".ico", ".heic", ".jfif"],

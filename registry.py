@@ -33,8 +33,17 @@ class RegistryManager:
                 self._delete_key_tree(winreg.HKEY_CLASSES_ROOT,
                                       rf"SystemFileAssociations\{ext}\shell\{self.app_key_name}")
 
+    def _set_multiple_invoke_limit(self, limit: int = 1000):
+        for root in (winreg.HKEY_CURRENT_USER, winreg.HKEY_LOCAL_MACHINE):
+            try:
+                with winreg.CreateKey(root, r"Software\Microsoft\Windows\CurrentVersion\Explorer") as key:
+                    winreg.SetValueEx(key, "MultipleInvokePromptMinimum", 0, winreg.REG_DWORD, limit)
+            except Exception:
+                pass
+
     def install(self):
         self.uninstall()
+        self._set_multiple_invoke_limit(1000)
         try:
             for category, data in self.config.items():
                 if category == "settings": continue
@@ -48,25 +57,24 @@ class RegistryManager:
                     with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, base_path) as key:
                         winreg.SetValueEx(key, "MUIVerb", 0, winreg.REG_SZ, "Convert")
                         winreg.SetValueEx(key, "SubCommands", 0, winreg.REG_SZ, "")
+                        winreg.SetValueEx(key, "MultiSelectModel", 0, winreg.REG_SZ, "Player")
                         self._register_targets(rf"{base_path}\shell", valid_targets)
         except PermissionError:
             sys.exit(1)
 
     def _register_targets(self, parent_path: str, targets: list):
-        # Группируем GIF таргеты
         gif_variants = [t for t in targets if t.startswith("gif")]
         other_targets = [t for t in targets if not t.startswith("gif")]
 
-        # Регистрация обычных таргетов
         for target in sorted(other_targets):
             self._create_verb(parent_path, target, f"To {target.upper()}")
 
-        # Регистрация каскадного меню для GIF
         if gif_variants:
             gif_menu_path = rf"{parent_path}\gif_cascade"
             with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, gif_menu_path) as key:
                 winreg.SetValueEx(key, "MUIVerb", 0, winreg.REG_SZ, "To GIF")
                 winreg.SetValueEx(key, "SubCommands", 0, winreg.REG_SZ, "")
+                winreg.SetValueEx(key, "MultiSelectModel", 0, winreg.REG_SZ, "Player")
 
                 inner_shell = rf"{gif_menu_path}\shell"
                 for g_target in sorted(gif_variants):
@@ -79,6 +87,7 @@ class RegistryManager:
         verb_path = rf"{parent_path}\to_{target}"
         with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, verb_path) as key:
             winreg.SetValueEx(key, "", 0, winreg.REG_SZ, label)
+            winreg.SetValueEx(key, "MultiSelectModel", 0, winreg.REG_SZ, "Player")
             with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, rf"{verb_path}\command") as cmd_key:
                 cmd = f'"{self.python_exe}" "{self.script_path}" "%1" "{target}"'
                 winreg.SetValueEx(cmd_key, "", 0, winreg.REG_SZ, cmd)

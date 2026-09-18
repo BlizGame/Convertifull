@@ -6,6 +6,13 @@ from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
 
 
+try:
+    import pillow_heif
+    pillow_heif.register_heif_opener()
+except ImportError:
+    pass
+
+
 class BaseConverter(ABC):
     @abstractmethod
     def convert(self, input_path: str, target_ext: str) -> None:
@@ -21,10 +28,17 @@ class ImageConverter(BaseConverter):
     def convert(self, input_path: str, target_ext: str) -> None:
         out_path = self.get_output_path(input_path, target_ext)
         with Image.open(input_path) as img:
-            if img.mode in ("RGBA", "P", "LA", "L"):
-                if target_ext.lower() in ("jpg", "jpeg", "bmp"):
+            target = target_ext.lower()
+            if target in ("jpg", "jpeg", "bmp"):
+                if img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info):
+                    background = Image.new("RGB", img.size, (255, 255, 255))
+                    alpha_img = img.convert("RGBA")
+                    background.paste(alpha_img, mask=alpha_img.split()[3])
+                    img = background
+                elif img.mode != "RGB":
                     img = img.convert("RGB")
-                elif target_ext.lower() in ("png", "webp"):
+            elif target in ("png", "webp"):
+                if img.mode not in ("RGB", "RGBA"):
                     img = img.convert("RGBA")
             img.save(out_path)
 
@@ -47,7 +61,6 @@ class FFmpegConverter(BaseConverter):
             vf = "split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"
             cmd = ["ffmpeg", "-y", "-i", input_path, "-vf", vf, out_path]
         elif target_ext.lower() == "gif_low":
-            # Снижение FPS до 12 и ограничение ширины до 480px для веса
             vf = "fps=12,scale=480:-1:flags=lanczos"
             cmd = ["ffmpeg", "-y", "-i", input_path, "-vf", vf, out_path]
         else:
